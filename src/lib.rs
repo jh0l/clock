@@ -54,3 +54,9 @@ impl PartialEq for Clock {
         self.minutes == other.minutes && self.hours == other.hours
     }
 }
+
+impl From<Clock> for String {
+    fn from(c: Clock) -> Self {
+        c.to_string()
+    }
+}
