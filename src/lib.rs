@@ -1,15 +1,17 @@
 use std::fmt;
 
-fn rem_euclid(a: f32, rhs: f32) -> f32 {
-    let r = a % rhs;
-    if r < 0. {
-        if rhs < 0. {
-            r - rhs
+// temporary shim of f32.rem_euclid method implemented in Rust Nightly but missing from Stable
+trait RemEuclid {
+    fn rem_euclid(self, rhs: f32) -> f32;
+}
+impl RemEuclid for f32 {
+    fn rem_euclid(self, rhs: f32) -> f32 {
+        let r = self % rhs;
+        if r < 0.0 {
+            r + rhs.abs()
         } else {
-            r + rhs
+            r
         }
-    } else {
-        r
     }
 }
 
@@ -22,11 +24,12 @@ pub struct Clock {
 impl Clock {
     const MIN: f32 = 60.;
     const HRS: f32 = 24.;
+
     fn get_hrs_min_res(hours: i32, minutes: i32) -> (i32, i32) {
         let t = (minutes as f32 + hours as f32 * Self::MIN) / Self::MIN;
-        let h = rem_euclid(t, Self::HRS);
-        let m = (h - h as i32 as f32) * Self::MIN;
-        (h as i32, m.round() as i32)
+        let h = t.rem_euclid(Self::HRS);
+        let m = (h - h.floor()) * Self::MIN;
+        (h as i32,  m.round() as i32)
     }
 
     pub fn new(hours: i32, minutes: i32) -> Self {
