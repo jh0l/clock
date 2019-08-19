@@ -25,21 +25,22 @@ impl Clock {
     const MIN: f32 = 60.;
     const HRS: f32 = 24.;
 
-    fn get_hrs_min_res(hours: i32, minutes: i32) -> (i32, i32) {
+    fn get_hrs_min_res(hours: i32, minutes: i32) -> Self {
         let t = (minutes as f32 + hours as f32 * Self::MIN) / Self::MIN;
         let h = t.rem_euclid(Self::HRS);
         let m = (h - h.floor()) * Self::MIN;
-        (h as i32,  m.round() as i32)
+        Self {
+            hours: h as i32,
+            minutes: m.round() as i32,
+        }
     }
 
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let (hours, minutes) = Self::get_hrs_min_res(hours, minutes);
-        Self { hours, minutes }
+        Self::get_hrs_min_res(hours, minutes)
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        let (hours, minutes) = Self::get_hrs_min_res(self.hours, self.minutes + minutes);
-        Self { hours, minutes }
+        Self::get_hrs_min_res(self.hours, self.minutes + minutes)
     }
 }
 
